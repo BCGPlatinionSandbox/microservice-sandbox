@@ -1,0 +1,64 @@
+extends layout
+
+block css
+  link(rel='stylesheet', href='http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+  link(rel='stylesheet', href='http://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css')
+  link(rel='stylesheet', href='/stylesheets/upload.css')
+
+
+block scripts
+  script(src='/javascripts/dropzone.js')
+  script Dropzone.autoDiscover = false;
+
+
+block content
+  
+  div#container.container
+    h1= title
+    p #{subtitle}
+    div#actions.row
+      div.col-lg-7
+         span(class="btn btn-success fileinput-button dz-clickable")
+           i(class="glyphicon glyphicon-plus")
+           span Add files...
+         button(type="submit" class="btn btn-primary start")
+           i(class="glyphicon glyphicon-upload")
+           span Start upload
+
+         button(type="reset" class="btn btn-warning cancel")
+           i(class="glyphicon glyphicon-ban-circle")
+           span Cancel upload
+
+      div.col-lg-5
+        span.fileupload-process
+          div#total-progress(class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0")
+            div(class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress="")
+
+
+  
+    div#previews(class="table table-striped" class="files")
+      div#template(class="file-row")
+        div
+          span.preview
+            img(data-dz-thumbnail)
+        div
+          p.name(data-dz-name)
+          p.name(data-dz-url)
+          strong(class="error text-danger" data-dz-errormessage)
+        div
+          p.size(data-dz-size)
+          div(class="progress progress-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0")
+          div(class="progress-bar progress-bar-success" style="width:0%;" data-dz-uploadprogress)
+        div
+          button(class="btn btn-primary start")
+            i(class="glyphicon glyphicon-upload")
+            span Start
+          button(data-dz-remove class="btn btn-warning cancel")
+            i(class="glyphicon glyphicon-ban-circle")
+            span Cancel
+          button(data-dz-remove class="btn btn-danger delete")
+            i(class="glyphicon glyphicon-trash")
+            span Delete
+
+
+  script(src='/javascripts/fe-script.js')

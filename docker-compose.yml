@@ -1,0 +1,111 @@
+version: "3.1"
+
+################################################################
+# Micro-service
+################################################################
+
+
+services:
+
+  reverse-proxy:
+    image: nginx-reverse
+    build:
+      context: reverse-proxy
+      dockerfile: Dockerfile
+
+    ports:
+      - "8090:80"
+    networks:
+      ms-network:
+    depends_on:
+      - api
+      - front-end
+    # deploy:
+    #   mode: replicated
+    #   replicas: 1
+
+  api:
+    image: api
+    build:
+      context: api
+      dockerfile: Dockerfile
+
+    networks:
+      ms-network:
+    # deploy:
+    #   mode: replicated
+    #   replicas: 1
+    depends_on:
+      - cassandra-seed
+      - cassandra
+
+  front-end:
+    image: front-end
+    build:
+      context: front-end
+      dockerfile: Dockerfile
+
+    networks:
+      ms-network:
+    # deploy:
+    #   mode: replicated
+    #   replicas: 1
+
+  cassandra-seed:
+    image: cassandra
+    deploy:
+      # restart_policy:
+      #   condition: on-failure
+      #   max_attempts: 3
+      #   window: 120s
+      # placement:
+      #   constraints:
+      #   - node.labels.db==cassandra1
+    environment:
+      CASSANDRA_BROADCAST_ADDRESS: cassandra-seed
+    # volumes:
+    # - volume1:/var/lib/cassandra
+    ports:
+      - "7000"
+    networks:
+      ms-network:
+
+  cassandra:
+    image: cassandra
+    # deploy:
+    #   restart_policy:
+    #     condition: on-failure
+    #     max_attempts: 3
+    #     window: 120s
+      # placement:
+      #   constraints:
+      #   - node.labels.db==cassandra1
+    environment:
+      CASSANDRA_BROADCAST_ADDRESS: cassandra
+      CASSANDRA_SEEDS: cassandra-seed
+    # volumes:
+    # - volume1:/var/lib/cassandra
+    depends_on:
+      - cassandra-seed
+    ports:
+      - "7000"
+    networks:
+      ms-network:
+
+
+  portainer:
+    image: portainer/portainer
+    ports:
+      - "9000:9000"
+    deploy:
+      mode: replicated
+      replicas: 1
+      # placement:
+      #   constraints: [node.role == manager]
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+
+
+
+networks:
+        ms-network:
