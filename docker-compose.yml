@@ -96,7 +96,7 @@ services:
   portainer:
     image: portainer/portainer
     ports:
-      - "9000:9000"
+      - "127.0.0.1:9000:9000"
     deploy:
       mode: replicated
       replicas: 1
